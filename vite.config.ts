@@ -19,6 +19,14 @@ export default defineConfig({
       formats: ['es', 'umd'],
       name: 'ReadonlyFormItem',
       fileName: (format) => `readonly-form-item.${format}.js`
+    },
+    rollupOptions: {
+      external: ['vue'],
+      output: {
+        globals: {
+          vue: 'Vue'
+        }
+      }
     }
   }
 })
