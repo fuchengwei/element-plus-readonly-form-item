@@ -83,7 +83,7 @@ const getSeparator = () => props.separator || getGlobalConfig.value.separator ||
 
 const getRangeSeparator = () => props.rangeSeparator || getGlobalConfig.value.rangeSeparator || '~'
 
-const getValue = () => (attrs.prop as string)?.split('.')?.reduce((pre, cur) => pre[cur], elFormModel.value)
+const getValue = () => (attrs.prop as string)?.split('.')?.reduce((pre, cur) => pre?.[cur], elFormModel.value)
 
 const getContentValue = () => {
   if (props.value) {
@@ -152,8 +152,10 @@ const getContentValue = () => {
 }
 
 const updateContentValue = () => {
-  const value = getContentValue()
-  contentValue.value = typeof value === 'number' ? value : value || getEmptyText()
+  try {
+    const value = getContentValue()
+    contentValue.value = typeof value === 'number' ? value : value || getEmptyText()
+  } catch (_) {}
 }
 
 watch(
