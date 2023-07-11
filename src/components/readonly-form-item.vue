@@ -9,7 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, getCurrentInstance, inject, nextTick, ref, useAttrs, useSlots, watch } from 'vue'
+// @ts-ignore
+import { formContextKey, formItemContextKey } from 'element-plus/es/components/form/src/constants'
 import dayjs from 'dayjs'
 import { getElFormVNode, getFormComponentVNode, isTwoDimensionalArray, DEFAULT_FORMATS_TIME, DEFAULT_FORMATS_DATEPICKER } from '@/utils'
 
@@ -19,6 +21,7 @@ defineOptions({
 
 const instance = getCurrentInstance()
 const elForm = getElFormVNode(instance!)
+const elFormContext = inject<any>(formContextKey)
 const slots = useSlots()
 const attrs = useAttrs()
 
@@ -46,7 +49,6 @@ const otherSlots = computed(() => {
 const isReadonly = computed(() => (props.readonly !== undefined ? props.readonly : (elForm.proxy as any).$attrs.readonly))
 const formItemProps = computed(() => ({
   ...attrs,
-  prop: isReadonly.value ? '' : attrs.prop,
   labelWidth: attrs.label ? attrs.labelWidth || elForm.props.labelWidth : 'auto',
   style: {
     ...attrs.style!,
@@ -165,6 +167,17 @@ watch(
     updateContentValue()
   },
   { deep: true, immediate: true }
+)
+
+watch(
+  isReadonly,
+  (val) => {
+    nextTick(() => {
+      const context = instance?.proxy?.$el?.__vnode.ctx.provides[formItemContextKey]
+      val ? elFormContext?.removeField(context) : elFormContext?.addField(context)
+    })
+  },
+  { immediate: true }
 )
 
 let num = 0
