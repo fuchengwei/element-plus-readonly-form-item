@@ -3,13 +3,13 @@
     <template v-for="(_, name) in otherSlots" #[name]>
       <slot :name="name" />
     </template>
-    <span v-if="isReadonly">{{ contentValue }}</span>
+    <span v-if="isReadonly" :style="contentStyle">{{ contentValue }}</span>
     <slot v-else />
   </el-form-item>
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, nextTick, ref, useAttrs, useSlots, watch } from 'vue'
+import { StyleValue, computed, getCurrentInstance, inject, nextTick, ref, useAttrs, useSlots, watch } from 'vue'
 // @ts-ignore
 import { formContextKey, formItemContextKey } from 'element-plus/es/components/form/src/constants'
 import dayjs from 'dayjs'
@@ -47,15 +47,27 @@ const otherSlots = computed(() => {
   return rest
 })
 const isReadonly = computed(() => (props.readonly !== undefined ? props.readonly : (elForm.proxy as any).$attrs.readonly))
+const isTable = computed(() => ['ElTableRow', 'ElTableBody'].includes(instance?.parent?.type.name!))
 const formItemProps = computed(() => ({
   ...attrs,
   labelWidth: attrs.label ? attrs.labelWidth || elForm.props.labelWidth : 'auto',
   style: {
     ...attrs.style!,
-    marginBottom: ['ElTableRow', 'ElTableBody'].includes(instance?.parent?.type.name!) && '0'
+    marginBottom: isTable.value && '0'
   }
 }))
 const getGlobalConfig = computed(() => instance?.appContext.config.globalProperties.$ReadonlyFormItem || {})
+const contentStyle = computed<StyleValue>(() =>
+  isTable.value
+    ? {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: 'inline-block',
+        width: '100%'
+      }
+    : { wordBreak: 'break-all' }
+)
 
 const componentVNode = () => getFormComponentVNode(slots.default!())
 
