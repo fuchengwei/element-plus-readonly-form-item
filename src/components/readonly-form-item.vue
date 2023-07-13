@@ -64,7 +64,8 @@ const contentStyle = computed<StyleValue>(() =>
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         display: 'inline-block',
-        width: '100%'
+        width: '100%',
+        verticalAlign: 'bottom'
       }
     : { wordBreak: 'break-all' }
 )
