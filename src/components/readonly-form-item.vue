@@ -182,6 +182,8 @@ watch(
   { deep: true, immediate: true }
 )
 
+watch(() => attrs, updateContentValue, { deep: true })
+
 watch(
   isReadonly,
   (val) => {
