@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { StyleValue, computed, getCurrentInstance, inject, nextTick, ref, useAttrs, useSlots, watch } from 'vue'
+import { StyleValue, computed, getCurrentInstance, inject, nextTick, onMounted, ref, useAttrs, useSlots, watch } from 'vue'
 // @ts-ignore
 import { formContextKey, formItemContextKey } from 'element-plus/es/components/form/src/constants'
 import dayjs from 'dayjs'
@@ -46,8 +46,8 @@ const otherSlots = computed(() => {
   const { default: _, ...rest } = slots
   return rest
 })
-const isReadonly = computed(() => (props.readonly !== undefined ? props.readonly : (elForm.proxy as any).$attrs.readonly))
-const isTable = computed(() => ['ElTableRow', 'ElTableBody'].includes(instance?.parent?.type.name!))
+const isReadonly = computed<boolean>(() => (props.readonly !== undefined ? props.readonly : (elForm.proxy as any).$attrs.readonly))
+const isTable = computed<boolean>(() => ['ElTableRow', 'ElTableBody'].includes(instance?.parent?.type.name!))
 const formItemProps = computed(() => ({
   ...attrs,
   labelWidth: attrs.label ? attrs.labelWidth || elForm.props.labelWidth : 'auto',
@@ -173,6 +173,13 @@ const updateContentValue = () => {
   } catch (_) {}
 }
 
+const dispatch = (bool: boolean) => {
+  nextTick(() => {
+    const context = instance?.proxy?.$el?.__vnode.ctx.provides[formItemContextKey]
+    bool ? elFormContext?.removeField(context) : elFormContext?.addField(context)
+  })
+}
+
 watch(
   () => (elForm.proxy as any).model,
   (val) => {
@@ -184,16 +191,11 @@ watch(
 
 watch(() => attrs, updateContentValue, { deep: true })
 
-watch(
-  isReadonly,
-  (val) => {
-    nextTick(() => {
-      const context = instance?.proxy?.$el?.__vnode.ctx.provides[formItemContextKey]
-      val ? elFormContext?.removeField(context) : elFormContext?.addField(context)
-    })
-  },
-  { immediate: true }
-)
+watch(isReadonly, dispatch)
+
+onMounted(() => {
+  isReadonly.value && dispatch(true)
+})
 
 let num = 0
 let timer = setInterval(() => {
