@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { StyleValue, computed, getCurrentInstance, inject, nextTick, onMounted, ref, useAttrs, useSlots, watch } from 'vue'
+import { StyleValue, computed, getCurrentInstance, inject, nextTick, onMounted, onBeforeUnmount, ref, useAttrs, useSlots, watch } from 'vue'
 // @ts-ignore
 import { formContextKey, formItemContextKey } from 'element-plus/es/components/form/src/constants'
 import dayjs from 'dayjs'
@@ -195,6 +195,10 @@ watch(isReadonly, dispatch)
 
 onMounted(() => {
   isReadonly.value && dispatch(true)
+})
+
+onBeforeUnmount(() => {
+  isReadonly.value && delete instance?.vnode?.props?.prop
 })
 
 let num = 0
