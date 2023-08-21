@@ -1,6 +1,6 @@
 <template>
   <el-form-item v-bind="formItemProps">
-    <template v-for="(_, name) in otherSlots" #[name]>
+    <template v-for="(_, name) in otherSlots()" #[name]>
       <slot :name="name" />
     </template>
     <span v-if="isReadonly" :style="contentStyle">{{ contentValue }}</span>
@@ -42,10 +42,6 @@ const props = withDefaults(
 const elFormModel = ref((elForm.proxy as any).model)
 const contentValue = ref('')
 
-const otherSlots = computed(() => {
-  const { default: _, ...rest } = slots
-  return rest
-})
 const isReadonly = computed<boolean>(() => (props.readonly !== undefined ? props.readonly : (elForm.proxy as any).$attrs.readonly))
 const isTable = computed<boolean>(() => ['ElTableRow', 'ElTableBody'].includes(instance?.parent?.type.name!))
 const formItemProps = computed(() => ({
@@ -69,6 +65,11 @@ const contentStyle = computed<StyleValue>(() =>
       }
     : { wordBreak: 'break-all' }
 )
+
+const otherSlots = () => {
+  const { default: _, ...rest } = slots
+  return rest
+}
 
 const componentVNode = () => getFormComponentVNode(slots.default!())
 
@@ -101,7 +102,7 @@ const getRangeSeparator = () => props.rangeSeparator || getGlobalConfig.value.ra
 const getValue = () => (attrs.prop as string)?.split('.')?.reduce((pre, cur) => pre?.[cur], elFormModel.value)
 
 const getContentValue = () => {
-  if (props.value) {
+  if (instance?.vnode.props?.hasOwnProperty.call(instance?.vnode.props, 'value')) {
     return props.value
   }
 
@@ -114,7 +115,7 @@ const getContentValue = () => {
       const options = componentChildrenVNode(vNode).children?.map((_vNode: any) => _vNode.props)
       return Array.isArray(value)
         ? options
-            ?.filter((item: any) => value.includes(item.value))
+            ?.filter((item: any) => value?.includes(item.value))
             ?.map((item: any) => item.label)
             ?.join(getSeparator())
         : options?.find((item: any) => item.value === value)?.label
@@ -123,7 +124,7 @@ const getContentValue = () => {
       return getOptions(vNode)?.find((item) => item.value === value)?.label
     case 'ElCheckboxGroup':
       return getOptions(vNode)
-        ?.filter((item) => value.includes(item.value))
+        ?.filter((item) => value?.includes(item.value))
         ?.map((item) => item.label)
         ?.join(getSeparator())
     case 'ElCascader': {
