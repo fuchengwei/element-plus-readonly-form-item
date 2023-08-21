@@ -102,7 +102,7 @@ const getRangeSeparator = () => props.rangeSeparator || getGlobalConfig.value.ra
 const getValue = () => (attrs.prop as string)?.split('.')?.reduce((pre, cur) => pre?.[cur], elFormModel.value)
 
 const getContentValue = () => {
-  if (instance?.vnode.props?.hasOwnProperty.call(instance?.vnode.props, 'value')) {
+  if ('value' in instance?.vnode.props!) {
     return props.value
   }
 
