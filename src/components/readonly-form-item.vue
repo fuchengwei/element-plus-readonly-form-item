@@ -176,8 +176,10 @@ const updateContentValue = () => {
 
 const dispatch = (bool: boolean) => {
   nextTick(() => {
-    const context = instance?.proxy?.$el?.__vnode.ctx.provides[formItemContextKey as any]
-    bool ? elFormContext?.removeField(context) : elFormContext?.addField(context)
+    const context = instance?.proxy?.$el?.__vnode?.ctx?.provides?.[formItemContextKey as any]
+    if (context) {
+      bool ? elFormContext?.removeField(context) : elFormContext?.addField(context)
+    }
   })
 }
 
