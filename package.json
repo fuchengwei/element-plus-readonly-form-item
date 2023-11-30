@@ -1,7 +1,7 @@
 {
   "name": "element-plus-readonly-form-item",
   "description": "基于 ElementPlus 的表单只读态控件，完美适配所有表单组件。主要用于新建页与详情页动态切换。支持 npm 与 cdn 方式的引入。",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "type": "module",
   "types": "src/index.d.ts",
   "main": "dist/readonly-form-item.umd.js",
@@ -38,7 +38,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "dayjs": "^1.11.8"
+    "dayjs": "^1.11.8",
+    "default-passive-events": "^2.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
@@ -48,7 +49,7 @@
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "cz-customizable": "^7.0.0",
-    "element-plus": "^2.3.6",
+    "element-plus": "^2.2.21",
     "eslint": "^8.43.0",
     "eslint-config-standard-with-typescript": "^35.0.0",
     "eslint-plugin-import": "^2.25.2",

@@ -1,6 +1,8 @@
 import { App } from 'vue'
 import ReadonlyFormItem from '@/components/readonly-form-item.vue'
 
+import 'default-passive-events'
+
 interface IOptions {
   emptyText?: string
   separator?: string
